@@ -30,9 +30,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'unicorn'
 
 # Use Capistrano for deployment
-gem 'capistrano-rails', group: :development
+#gem 'capistrano-rails', group: :development
 #gem 'capistrano-rbenv', github: "capistrano/rbenv", group: :development
-gem 'capistrano-bundler', group: :development
+#gem 'capistrano-bundler', group: :development
 
 #cria o arquivo de cron
 gem 'whenever', :require => false
