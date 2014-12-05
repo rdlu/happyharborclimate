@@ -20,6 +20,8 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 5
+  username: hhc
+  password: "JmfbdsWh6ryE"
 
 development:
   <<: *default
@@ -32,7 +34,7 @@ development:
   username: hhc
 
   # The password associated with the postgres role (username).
-  password: "]}-Jmf]h6ryE"
+
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
