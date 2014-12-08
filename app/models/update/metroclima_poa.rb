@@ -1,5 +1,5 @@
 class Update::MetroclimaPoa
-  def update
+  def self.update
     sleep 1.minute
     mclima = Sources::MetroclimaPoa.new
     Station.all.map {|station|
