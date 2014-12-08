@@ -1,0 +1,41 @@
+<%= form_for(@forecast_log) do |f| %>
+  <% if @forecast_log.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@forecast_log.errors.count, "error") %> prohibited this forecast_log from being saved:</h2>
+
+      <ul>
+      <% @forecast_log.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :forecast_provider_id %><br>
+    <%= f.text_field :forecast_provider_id %>
+  </div>
+  <div class="field">
+    <%= f.label :day %><br>
+    <%= f.datetime_select :day %>
+  </div>
+  <div class="field">
+    <%= f.label :temperature_max %><br>
+    <%= f.text_field :temperature_max %>
+  </div>
+  <div class="field">
+    <%= f.label :temperature_min %><br>
+    <%= f.text_field :temperature_min %>
+  </div>
+  <div class="field">
+    <%= f.label :precipitation %><br>
+    <%= f.text_field :precipitation %>
+  </div>
+  <div class="field">
+    <%= f.label :pressure %><br>
+    <%= f.text_field :pressure %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

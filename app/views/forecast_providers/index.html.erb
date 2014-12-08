@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Forecast Providers</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Apitype</th>
+      <th>Apiparams</th>
+      <th>Provides</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @forecast_providers.each do |forecast_provider| %>
+      <tr>
+        <td><%= forecast_provider.name %></td>
+        <td><%= forecast_provider.apitype %></td>
+        <td><%= forecast_provider.apiparams %></td>
+        <td><%= forecast_provider.provides %></td>
+        <td><%= link_to 'Show', forecast_provider %></td>
+        <td><%= link_to 'Edit', edit_forecast_provider_path(forecast_provider) %></td>
+        <td><%= link_to 'Destroy', forecast_provider, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Forecast provider', new_forecast_provider_path %>

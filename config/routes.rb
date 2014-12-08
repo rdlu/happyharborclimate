@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :forecast_logs
+
+  resources :forecast_providers
+
   resources :station_logs
 
   resources :stations

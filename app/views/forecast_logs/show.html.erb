@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Forecast provider:</strong>
+  <%= @forecast_log.forecast_provider %>
+</p>
+
+<p>
+  <strong>Day:</strong>
+  <%= @forecast_log.day %>
+</p>
+
+<p>
+  <strong>Temperature max:</strong>
+  <%= @forecast_log.temperature_max %>
+</p>
+
+<p>
+  <strong>Temperature min:</strong>
+  <%= @forecast_log.temperature_min %>
+</p>
+
+<p>
+  <strong>Precipitation:</strong>
+  <%= @forecast_log.precipitation %>
+</p>
+
+<p>
+  <strong>Pressure:</strong>
+  <%= @forecast_log.pressure %>
+</p>
+
+<%= link_to 'Edit', edit_forecast_log_path(@forecast_log) %> |
+<%= link_to 'Back', forecast_logs_path %>

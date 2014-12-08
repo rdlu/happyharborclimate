@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  forecast_provider_id: 
+  day: 2014-12-08 11:33:36
+  temperature_max: 1.5
+  temperature_min: 1.5
+  precipitation: 1.5
+  pressure: 1.5
+
+two:
+  forecast_provider_id: 
+  day: 2014-12-08 11:33:36
+  temperature_max: 1.5
+  temperature_min: 1.5
+  precipitation: 1.5
+  pressure: 1.5

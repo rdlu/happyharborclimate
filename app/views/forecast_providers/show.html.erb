@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @forecast_provider.name %>
+</p>
+
+<p>
+  <strong>Apitype:</strong>
+  <%= @forecast_provider.apitype %>
+</p>
+
+<p>
+  <strong>Apiparams:</strong>
+  <%= @forecast_provider.apiparams %>
+</p>
+
+<p>
+  <strong>Provides:</strong>
+  <%= @forecast_provider.provides %>
+</p>
+
+<%= link_to 'Edit', edit_forecast_provider_path(@forecast_provider) %> |
+<%= link_to 'Back', forecast_providers_path %>
