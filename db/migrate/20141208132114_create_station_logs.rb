@@ -5,7 +5,7 @@ class CreateStationLogs < ActiveRecord::Migration
       t.timestamp :normalized_timestamp
       t.float :temperature
       t.integer :pressure
-      t.integer :windspeed
+      t.float :windspeed
       t.string :winddirection
       t.float :humidity
       t.float :dewpoint

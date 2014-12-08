@@ -9,28 +9,28 @@ Station.create([
   {name: 'Metroclima: Menino Deus',
     lat: -30.06109619,
     lon: -51.22273633,
-    apitype: 'MetroclimaPOA',
+    apitype: 'MetroclimaPoa',
     apiparams: {id:3},
     provides: {dewpoint: 'celsius',  pressure: 'hpa', windspeed: 'm/s', humidity: '%', temperature: 'celsius'}
   },
   {name: 'Metroclima: Lomba do Pinheiro',
     lat: -30.12022812,
     lon: -51.08595404,
-    apitype: 'MetroclimaPOA',
+    apitype: 'MetroclimaPoa',
     apiparams: {id:4},
     provides: {dewpoint: 'celsius', pressure: 'hpa', windspeed: 'm/s', humidity: '%', temperature: 'celsius', precipitation: 'mm'}
   },
   {name: 'Metroclima: São João',
     lat: -30.00150359,
     lon: -51.17241212,
-    apitype: 'MetroclimaPOA',
+    apitype: 'MetroclimaPoa',
     apiparams: {id:1},
     provides: {dewpoint: 'celsius', pressure: 'hpa', windspeed: 'm/s', humidity: '%', temperature: 'celsius', precipitation: 'mm'}
   },
   {name: 'Metroclima: Moinhos de Vento',
     lat: -30.02477204,
     lon: -51.20667812,
-    apitype: 'MetroclimaPOA',
+    apitype: 'MetroclimaPoa',
     apiparams: {id:2},
     provides: {dewpoint: 'celsius', windspeed: 'm/s', humidity: '%', temperature: 'celsius', precipitation: 'mm'}
   }
