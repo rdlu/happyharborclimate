@@ -3,9 +3,10 @@ class CreateStationLogs < ActiveRecord::Migration
     create_table :station_logs do |t|
       t.references :station, index: true
       t.timestamp :normalized_timestamp
-      t.float :pressure
+      t.float :temperature
+      t.integer :pressure
       t.integer :windspeed
-      t.string3 :winddirection
+      t.string :winddirection
       t.float :humidity
       t.float :dewpoint
       t.float :precipitation
