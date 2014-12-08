@@ -11,13 +11,13 @@ class Sources::MetroclimaPoa
   def results(station)
     time = Time.now
     {
-      normalized_timestamp: time - (time.seconds % 1200).seconds,
-      temperature: @raw_data[station]["TEMPERATURA"].gsub(',','.').to_f,
-      pressure: @raw_data[station]["PRESSAO"].to_i,
-      windspeed: @raw_data[station]["VENTO"].gsub(',','.').to_f,
-      humidity: @raw_data[station]["UMIDADE"].gsub(',','.').to_f / 100,
-      dewpoint: @raw_data[station]["PONTO_DE_ORVALHO"].gsub(',','.').to_f,
-      precipitation: @raw_data[station]["CHUVA"].gsub(',','.').to_f
+      normalized_timestamp: (time - (time.seconds % 1200).seconds).round(0),
+      temperature: @raw_data[station]["TEMPERATURA"].nil? ? nil : @raw_data[station]["TEMPERATURA"].gsub(',','.').to_f,
+      pressure: @raw_data[station]["PRESSAO"].nil? ? nil : @raw_data[station]["PRESSAO"].to_i,
+      windspeed: @raw_data[station]["VENTO"].nil? ? nil : @raw_data[station]["VENTO"].gsub(',','.').to_f,
+      humidity: @raw_data[station]["UMIDADE"].nil? ? nil : @raw_data[station]["UMIDADE"].gsub(',','.').to_f / 100,
+      dewpoint: @raw_data[station]["PONTO_DE_ORVALHO"].nil? ? nil : @raw_data[station]["PONTO_DE_ORVALHO"].gsub(',','.').to_f,
+      precipitation: @raw_data[station]["CHUVA"].nil? ? nil : @raw_data[station]["CHUVA"].gsub(',','.').to_f
     }
   end
 
