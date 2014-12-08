@@ -1,0 +1,44 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Station:</strong>
+  <%= @station_log.station %>
+</p>
+
+<p>
+  <strong>Normalized timestamp:</strong>
+  <%= @station_log.normalized_timestamp %>
+</p>
+
+<p>
+  <strong>Pressure:</strong>
+  <%= @station_log.pressure %>
+</p>
+
+<p>
+  <strong>Windspeed:</strong>
+  <%= @station_log.windspeed %>
+</p>
+
+<p>
+  <strong>Winddirection:</strong>
+  <%= @station_log.winddirection %>
+</p>
+
+<p>
+  <strong>Humidity:</strong>
+  <%= @station_log.humidity %>
+</p>
+
+<p>
+  <strong>Dewpoint:</strong>
+  <%= @station_log.dewpoint %>
+</p>
+
+<p>
+  <strong>Precipitation:</strong>
+  <%= @station_log.precipitation %>
+</p>
+
+<%= link_to 'Edit', edit_station_log_path(@station_log) %> |
+<%= link_to 'Back', station_logs_path %>

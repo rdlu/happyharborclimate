@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  station_id: 
+  normalized_timestamp: 2014-12-08 11:21:14
+  pressure: 1.5
+  windspeed: 1
+  winddirection: 
+  humidity: 1.5
+  dewpoint: 1.5
+  precipitation: 1.5
+
+two:
+  station_id: 
+  normalized_timestamp: 2014-12-08 11:21:14
+  pressure: 1.5
+  windspeed: 1
+  winddirection: 
+  humidity: 1.5
+  dewpoint: 1.5
+  precipitation: 1.5

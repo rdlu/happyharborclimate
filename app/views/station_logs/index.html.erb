@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Station Logs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Station</th>
+      <th>Normalized timestamp</th>
+      <th>Pressure</th>
+      <th>Windspeed</th>
+      <th>Winddirection</th>
+      <th>Humidity</th>
+      <th>Dewpoint</th>
+      <th>Precipitation</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @station_logs.each do |station_log| %>
+      <tr>
+        <td><%= station_log.station %></td>
+        <td><%= station_log.normalized_timestamp %></td>
+        <td><%= station_log.pressure %></td>
+        <td><%= station_log.windspeed %></td>
+        <td><%= station_log.winddirection %></td>
+        <td><%= station_log.humidity %></td>
+        <td><%= station_log.dewpoint %></td>
+        <td><%= station_log.precipitation %></td>
+        <td><%= link_to 'Show', station_log %></td>
+        <td><%= link_to 'Edit', edit_station_log_path(station_log) %></td>
+        <td><%= link_to 'Destroy', station_log, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Station log', new_station_log_path %>

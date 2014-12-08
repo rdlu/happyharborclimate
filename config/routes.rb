@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :station_logs
+
+  resources :stations
+
   get 'welcome/index'
 
   # The priority is based upon order of creation: first created -> highest priority.

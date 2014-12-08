@@ -1,0 +1,49 @@
+<%= form_for(@station_log) do |f| %>
+  <% if @station_log.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@station_log.errors.count, "error") %> prohibited this station_log from being saved:</h2>
+
+      <ul>
+      <% @station_log.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :station_id %><br>
+    <%= f.text_field :station_id %>
+  </div>
+  <div class="field">
+    <%= f.label :normalized_timestamp %><br>
+    <%= f.datetime_select :normalized_timestamp %>
+  </div>
+  <div class="field">
+    <%= f.label :pressure %><br>
+    <%= f.text_field :pressure %>
+  </div>
+  <div class="field">
+    <%= f.label :windspeed %><br>
+    <%= f.number_field :windspeed %>
+  </div>
+  <div class="field">
+    <%= f.label :winddirection %><br>
+    <%= f.text_field :winddirection %>
+  </div>
+  <div class="field">
+    <%= f.label :humidity %><br>
+    <%= f.text_field :humidity %>
+  </div>
+  <div class="field">
+    <%= f.label :dewpoint %><br>
+    <%= f.text_field :dewpoint %>
+  </div>
+  <div class="field">
+    <%= f.label :precipitation %><br>
+    <%= f.text_field :precipitation %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
