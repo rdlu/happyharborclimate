@@ -11,7 +11,7 @@ class Sources::MetroclimaPoa
   def results(station)
     time = Time.now
     {
-      normalized_timestamp: (time - (time.seconds % 1200).seconds).round(0),
+      normalized_timestamp: (time - (time.to_i % 1200)).round(0),
       temperature: @raw_data[station]["TEMPERATURA"].nil? ? nil : @raw_data[station]["TEMPERATURA"].gsub(',','.').to_f,
       pressure: @raw_data[station]["PRESSAO"].nil? ? nil : @raw_data[station]["PRESSAO"].to_i,
       windspeed: @raw_data[station]["VENTO"].nil? ? nil : @raw_data[station]["VENTO"].gsub(',','.').to_f,
