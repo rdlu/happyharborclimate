@@ -26,6 +26,6 @@ every 1.day, at: '12:00 am' do
   runner 'Update::YahooWeather.update'
 end
 
-every 1.day, at: '4:30 am' do
+every 1.hour do
   command "backup perform -t production_backup"
 end
