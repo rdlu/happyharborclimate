@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
-        Happy Harbor Climate
+        Happy Harbor Climate: Monitor Clima/Tempo da Cidade Porto Alegre
       </a>
     </div>
   </div>
@@ -10,12 +10,57 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
-      <h1>Welcome#index</h1>
-      <p>Find me in app/views/welcome/index.html.erb</p>
+      <h2><small>Período: <%= I18n.l Date.today - 1.week, format: :long %> até <%= I18n.l Date.today, format: :long %></small></h2>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6"><div id="maintemp"></div></div>
+    <div class="col-md-6"></div>
   </div>
 </div>
 <script type="text/javascript" charset="utf-8">
   var stations = <%= Station.all.to_json.html_safe %>;
   var forecast_providers = <%= ForecastProvider.all.to_json.html_safe %>;
+
+  var composite = dc.compositeChart("#maintemp");
+
+  var q = queue()
+  .defer(d3.json, "station_logs.json")
+  .defer(d3.json, "forecast_logs.json");
+
+  q.await(function(error, st_logs, fc_logs) {
+
+    var ndx = crossfilter();
+    ndx.add(fc_logs.map(function(d) {
+      return {x: moment(d.day), y2: d.temperature_min, y1: d.temperature_max};
+    }));
+
+    var dim  = ndx.dimension(dc.pluck('x')),
+    grp1 = dim.group().reduceSum(dc.pluck('y1')),
+    grp2 = dim.group().reduceSum(dc.pluck('y2'));
+
+    composite
+    .width(768)
+    .height(300)
+    .x(d3.scale.linear().domain([0,20]))
+    .yAxisLabel("The Y Axis")
+    .legend(dc.legend().x(80).y(20).itemHeight(13).gap(5))
+    .renderHorizontalGridLines(true)
+    .compose([
+      dc.lineChart(composite)
+      .dimension(dim)
+      .colors('red')
+      .group(grp1, "Previsão Temperatura Máxima")
+      .dashStyle([2,2]),
+      dc.lineChart(composite)
+      .dimension(dim)
+      .colors('blue')
+      .group(grp2, "Previsão Temperatura Mínima")
+      .dashStyle([5,5])
+      ])
+      .brushOn(false)
+      .render();
+
+    });
 </script>
