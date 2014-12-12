@@ -35,3 +35,8 @@ Station.create([
     provides: {dewpoint: 'celsius', windspeed: 'm/s', humidity: '%', temperature: 'celsius', precipitation: 'mm'}
   }
   ])
+
+ForecastProvider.create(
+  { name: 'Yahoo! Weather - Porto Alegre, BR',
+    apitype: 'yahoo_weather',
+    provides: {temperature_min: 'celsius', temperature_max: 'celsius'}})

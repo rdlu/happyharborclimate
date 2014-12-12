@@ -21,3 +21,7 @@
 every 20.minutes do
   runner 'Update::MetroclimaPoa.update'
 end
+
+every 1.day do
+  runner 'Update::YahooWeather.update'
+end

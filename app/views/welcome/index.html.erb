@@ -15,3 +15,7 @@
     </div>
   </div>
 </div>
+<script language="text/javascript" charset="utf-8">
+  var stations = <%= Station.all.to_json %>;
+  var station_logs = <%= StationLog.where(normalized_timestamp: (1.week.ago..Time.now)).to_json %>;
+</script>
