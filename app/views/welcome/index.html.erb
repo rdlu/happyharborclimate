@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
-        Happy Harbor Climate: Monitor Clima/Tempo da Cidade Porto Alegre
+        Happy Harbor Climate: Monitor de Temperatura entre bairros de Porto Alegre
       </a>
     </div>
   </div>
@@ -13,10 +13,31 @@
       <h2><small>Período: <%= I18n.l Date.today - 1.week, format: :long %> até <%= I18n.l Date.today, format: :long %></small></h2>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Temperatura das Estações versus Previsão do Tempo</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="maintemp"></div></div>
+  </div>
 
   <div class="row">
-    <div class="col-md-6"><div id="maintemp"></div></div>
-    <div class="col-md-6"></div>
+    <div class="col-md-12">
+      <h4>Temperatura das Estações versus Pressão Atmosférica</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="tempvspress"></div></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Temperatura das Estações versus Precipitação</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="tempvsprecipit"></div></div>
   </div>
 </div>
 <script type="text/javascript" charset="utf-8">
@@ -25,42 +46,216 @@
 
   var composite = dc.compositeChart("#maintemp");
 
+  //"2014-12-14T00:00:00.000Z"
+  var dateFormat = d3.time.format('%Y-%m-%d %H:%M');
+  var numberFormat = d3.format('.2f');
+
+  var ndx = null;
+
+  var forecastlog = {
+    data: null,
+    findByDate: function(date) {
+      var ret = null;
+      if(date instanceof Date) {
+        date = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+      }
+
+      forecastlog.data.map(function(d) {
+        if(d.day == date) {
+          ret = d;
+        }
+      });
+      return ret;
+    }
+  }
+
+  var stationlog = {data:null}
+
+  function reduceAddAndFilter(key,key2,value2) {
+    return function(p, v){
+      if(v[key] === null && p === null){ return null; }
+      return v[key2] == value2 ? p + v[key] : p;
+    }
+  }
+  function reduceRemoveAndFilter(key,key2,value2) {
+    return function(p, v){
+      if(v[key] === null && p === null){ return null; }
+      return v[key2] == value2 ? p - v[key] : p;
+    }
+  }
+  function reduceInit(key) {
+    return null;
+  }
+
   var q = queue()
   .defer(d3.json, "station_logs.json")
   .defer(d3.json, "forecast_logs.json");
 
   q.await(function(error, st_logs, fc_logs) {
+    fc_logs.map(function(d) {
+      d.moment = moment(d.day);
+      d.date = d.moment.toDate();
+    });
 
-    var ndx = crossfilter();
-    ndx.add(fc_logs.map(function(d) {
-      return {x: moment(d.day), y2: d.temperature_min, y1: d.temperature_max};
-    }));
+    forecastlog.data = fc_logs;
 
-    var dim  = ndx.dimension(dc.pluck('x')),
-    grp1 = dim.group().reduceSum(dc.pluck('y1')),
-    grp2 = dim.group().reduceSum(dc.pluck('y2'));
+    st_logs.map(function(d) {
+      d.moment = moment(d.normalized_timestamp);
+      d.date = dateFormat(d.moment.toDate());
+      fc_log = forecastlog.findByDate(d.moment.format('YYYY-MM-DD'));
+      d.max_temp = fc_log == null ? null : fc_log.temperature_max
+      d.min_temp = fc_log == null ? null : fc_log.temperature_min
+    })
+
+    stationlog.data = st_logs;
+    ndx = crossfilter(st_logs);
+
+    var dateDimension = ndx.dimension(function (d) {
+      return d.moment.toDate();
+    });
+
+    var stationDimension = ndx.dimension(function(d) {
+      return d.station_id;
+    });
+
+
+    max_temp_group = dateDimension.group().reduce(function(p,v) { return v.max_temp; },function(p,v) { return v.max_temp; },function() { return null; });
+    min_temp_group = dateDimension.group().reduce(function(p,v) { return v.min_temp; },function(p,v) { return v.min_temp; },function() { return null; });
+
+    var temp_station_grp = [];
+
+    temp_station_grp[0] = dateDimension.group().reduce(function(p,v) { return v.station_id == 1 ? p + v.temperature : p; },function(p,v) { return v.station_id == 1 ? p - v.temperature : p; },function() { return null; });
+    temp_station_grp[1] = dateDimension.group().reduce(function(p,v) { return v.station_id == 2 ? p + v.temperature : p; },function(p,v) { return v.station_id == 2 ? p - v.temperature : p; },function() { return null; });
+    temp_station_grp[2] = dateDimension.group().reduce(function(p,v) { return v.station_id == 3 ? p + v.temperature : p; },function(p,v) { return v.station_id == 3 ? p - v.temperature : p; },function() { return null; });
+    temp_station_grp[3] = dateDimension.group().reduce(function(p,v) { return v.station_id == 4 ? p + v.temperature : p; },function(p,v) { return v.station_id == 4 ? p - v.temperature : p; },function() { return null; });
+
+    stationDimension.filterFunction(function(d) {
+      return d == 1 || d == 2 || d == 4;
+    });
 
     composite
-    .width(768)
+    .width(1280)
     .height(300)
-    .x(d3.scale.linear().domain([0,20]))
-    .yAxisLabel("The Y Axis")
-    .legend(dc.legend().x(80).y(20).itemHeight(13).gap(5))
+    .x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")]))
+    .y(d3.scale.linear().domain([-1,50]))
+    .yAxisLabel("Temperatura (°C)")
+    .legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5))
     .renderHorizontalGridLines(true)
     .compose([
       dc.lineChart(composite)
-      .dimension(dim)
-      .colors('red')
-      .group(grp1, "Previsão Temperatura Máxima")
-      .dashStyle([2,2]),
+        .dimension(dateDimension)
+        .colors('red')
+        .group(max_temp_group, "Previsão Temp. Máx.")
+        .dashStyle([2,2]),
       dc.lineChart(composite)
-      .dimension(dim)
-      .colors('blue')
-      .group(grp2, "Previsão Temperatura Mínima")
-      .dashStyle([5,5])
-      ])
-      .brushOn(false)
-      .render();
+        .dimension(dateDimension)
+        .colors('blue')
+        .group(min_temp_group, "Previsão Temp. Mín.")
+        .dashStyle([5,5]),
+      dc.barChart(composite)
+        .dimension(dateDimension)
+        .colors('silver')
+        .group(temp_station_grp[0], "Temp. "+stations[0].name),
+      dc.barChart(composite)
+        .dimension(dateDimension)
+        .colors('gold')
+        .group(temp_station_grp[1], "Temp. "+stations[1].name)
+    ])
+    .brushOn(false)
+    .render();
 
-    });
+    var composite_temp_pressure = dc.compositeChart("#tempvspress");
+    var pressure_station_grp = [];
+    pressure_station_grp[0] = dateDimension.group().reduce(
+      function(p,v) { if(v.pressure === null){ return null; } return v.station_id == 1 ? p + v.pressure : p; },
+      function(p,v) { if(v.pressure === null){ return null; } return v.station_id == 1 ? p - v.pressure : p; },
+      function() { return null; });
+    pressure_station_grp[1] = dateDimension.group().reduce(
+      function(p,v) { if(v.pressure === null){ return null; } return v.station_id == 2 ? p + v.pressure : p; },
+      function(p,v) { if(v.pressure === null){ return null; } return v.station_id == 2 ? p - v.pressure : p; },
+      function() { return null; });
+
+
+    composite_temp_pressure.
+      width(1280).
+      height(300).
+      x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")])).
+      y(d3.scale.linear().domain([-1,50])).
+      yAxisLabel("Temperatura (°C)").
+      rightY(d3.scale.linear().domain([<%=StationLog.all.min_by{|x| x.pressure.nil? ? Float::INFINITY : x.pressure.to_i }.pressure%>-10,<%=StationLog.all.max_by{|x| x.pressure.to_i }.pressure%>+20])).
+      rightYAxisLabel("Pressão Atm. (hPa)").
+      legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5)).
+      renderHorizontalGridLines(true).
+      compose([
+        dc.barChart(composite).
+          dimension(dateDimension).
+          colors('silver').
+          group(temp_station_grp[0], "Temp. "+stations[0].name),
+        dc.barChart(composite).
+          dimension(dateDimension).
+          colors('gold').
+          group(temp_station_grp[1], "Temp. "+stations[1].name),
+        dc.lineChart(composite).
+          dimension(dateDimension).
+          colors('teal').
+          dashStyle([2,2]).
+          group(pressure_station_grp[0], "Pressão Atm. "+stations[0].name).
+          useRightYAxis(true),
+        dc.lineChart(composite).
+          dimension(dateDimension).
+          colors('blue').
+          dashStyle([1,2]).
+          group(pressure_station_grp[1], "Pressão Atm. "+stations[1].name).
+          useRightYAxis(true),
+      ]).
+      brushOn(false).
+      render();
+
+      var composite_temp_precipit = dc.compositeChart("#tempvsprecipit");
+      var precipitation_station_grp = [];
+      precipitation_station_grp[0] = dateDimension.group().reduce(
+        function(p,v) { if(v.precipitation == null){ return null; } return v.station_id == 2 ? p + v.precipitation : p; },
+        function(p,v) { if(v.precipitation == null){ return null; } return v.station_id == 2 ? p - v.precipitation : p; },
+        function() { return null; });
+
+      precipitation_station_grp[1] = dateDimension.group().reduce(
+        function(p,v) { if(v.precipitation == null){ return null; } return v.station_id == 4 ? p + v.precipitation : p; },
+        function(p,v) { if(v.precipitation == null){ return null; } return v.station_id == 4 ? p - v.precipitation : p; },
+        function() { return null; });
+
+      composite_temp_precipit.
+        width(1280).
+        height(300).
+        x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")])).
+        y(d3.scale.linear().domain([-1,50])).
+        yAxisLabel("Temperatura (°C)").
+        rightY(d3.scale.linear().domain([0,<%=StationLog.all.max_by{|x| x.precipitation.to_i }.precipitation%>+10])).
+        rightYAxisLabel("Precipitação (mm)").
+        legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5)).
+        renderHorizontalGridLines(true).
+        compose([
+          dc.barChart(composite).
+          dimension(dateDimension).
+          colors('silver').
+          group(temp_station_grp[3], "Temp. "+stations[3].name),
+          dc.barChart(composite).
+          dimension(dateDimension).
+          colors('gold').
+          group(temp_station_grp[1], "Temp. "+stations[1].name),
+          dc.lineChart(composite).
+          dimension(dateDimension).
+          colors('teal').
+          group(precipitation_station_grp[0], "Precipitação "+stations[1].name).
+          useRightYAxis(true),
+          dc.lineChart(composite).
+          dimension(dateDimension).
+          colors('red').
+          dashStyle([1,2]).
+          group(precipitation_station_grp[1], "Precipitação "+stations[3].name).
+          useRightYAxis(true),
+          ]).
+          brushOn(false).
+          render();
+
+  });
 </script>
