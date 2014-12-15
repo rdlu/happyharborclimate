@@ -35,6 +35,8 @@ worker_processes 2
 #
 timeout 60
 
+pid "/opt/happyharborclimate/pids/unicorn.pid"
+
 
 # By default, the Unicorn logger will write to stderr.
 # Additionally, some applications/frameworks log to stderr or stdout,
