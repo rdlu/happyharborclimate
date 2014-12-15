@@ -14,7 +14,7 @@ class ForecastProvidersController < ApplicationController
 
   # GET /forecast_providers/new
   def new
-    @forecast_provider = ForecastProvider.new
+    #@forecast_provider = ForecastProvider.new
   end
 
   # GET /forecast_providers/1/edit
@@ -24,41 +24,41 @@ class ForecastProvidersController < ApplicationController
   # POST /forecast_providers
   # POST /forecast_providers.json
   def create
-    @forecast_provider = ForecastProvider.new(forecast_provider_params)
-
-    respond_to do |format|
-      if @forecast_provider.save
-        format.html { redirect_to @forecast_provider, notice: 'Forecast provider was successfully created.' }
-        format.json { render :show, status: :created, location: @forecast_provider }
-      else
-        format.html { render :new }
-        format.json { render json: @forecast_provider.errors, status: :unprocessable_entity }
-      end
-    end
+    # @forecast_provider = ForecastProvider.new(forecast_provider_params)
+    #
+    # respond_to do |format|
+    #   if @forecast_provider.save
+    #     format.html { redirect_to @forecast_provider, notice: 'Forecast provider was successfully created.' }
+    #     format.json { render :show, status: :created, location: @forecast_provider }
+    #   else
+    #     format.html { render :new }
+    #     format.json { render json: @forecast_provider.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # PATCH/PUT /forecast_providers/1
   # PATCH/PUT /forecast_providers/1.json
   def update
-    respond_to do |format|
-      if @forecast_provider.update(forecast_provider_params)
-        format.html { redirect_to @forecast_provider, notice: 'Forecast provider was successfully updated.' }
-        format.json { render :show, status: :ok, location: @forecast_provider }
-      else
-        format.html { render :edit }
-        format.json { render json: @forecast_provider.errors, status: :unprocessable_entity }
-      end
-    end
+    # respond_to do |format|
+    #   if @forecast_provider.update(forecast_provider_params)
+    #     format.html { redirect_to @forecast_provider, notice: 'Forecast provider was successfully updated.' }
+    #     format.json { render :show, status: :ok, location: @forecast_provider }
+    #   else
+    #     format.html { render :edit }
+    #     format.json { render json: @forecast_provider.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # DELETE /forecast_providers/1
   # DELETE /forecast_providers/1.json
   def destroy
-    @forecast_provider.destroy
-    respond_to do |format|
-      format.html { redirect_to forecast_providers_url, notice: 'Forecast provider was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    # @forecast_provider.destroy
+    # respond_to do |format|
+    #   format.html { redirect_to forecast_providers_url, notice: 'Forecast provider was successfully destroyed.' }
+    #   format.json { head :no_content }
+    # end
   end
 
   private

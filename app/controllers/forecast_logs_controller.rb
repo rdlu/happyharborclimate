@@ -14,7 +14,8 @@ class ForecastLogsController < ApplicationController
 
   # GET /forecast_logs/new
   def new
-    @forecast_log = ForecastLog.new
+    puts "Disabled"
+    #@forecast_log = ForecastLog.new
   end
 
   # GET /forecast_logs/1/edit
@@ -24,41 +25,43 @@ class ForecastLogsController < ApplicationController
   # POST /forecast_logs
   # POST /forecast_logs.json
   def create
-    @forecast_log = ForecastLog.new(forecast_log_params)
-
-    respond_to do |format|
-      if @forecast_log.save
-        format.html { redirect_to @forecast_log, notice: 'Forecast log was successfully created.' }
-        format.json { render :show, status: :created, location: @forecast_log }
-      else
-        format.html { render :new }
-        format.json { render json: @forecast_log.errors, status: :unprocessable_entity }
-      end
-    end
+    puts "Disabled"
+    #
+    # @forecast_log = ForecastLog.new(forecast_log_params)
+    #
+    # respond_to do |format|
+    #   if @forecast_log.save
+    #     format.html { redirect_to @forecast_log, notice: 'Forecast log was successfully created.' }
+    #     format.json { render :show, status: :created, location: @forecast_log }
+    #   else
+    #     format.html { render :new }
+    #     format.json { render json: @forecast_log.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # PATCH/PUT /forecast_logs/1
   # PATCH/PUT /forecast_logs/1.json
   def update
-    respond_to do |format|
-      if @forecast_log.update(forecast_log_params)
-        format.html { redirect_to @forecast_log, notice: 'Forecast log was successfully updated.' }
-        format.json { render :show, status: :ok, location: @forecast_log }
-      else
-        format.html { render :edit }
-        format.json { render json: @forecast_log.errors, status: :unprocessable_entity }
-      end
-    end
+    # respond_to do |format|
+    #   if @forecast_log.update(forecast_log_params)
+    #     format.html { redirect_to @forecast_log, notice: 'Forecast log was successfully updated.' }
+    #     format.json { render :show, status: :ok, location: @forecast_log }
+    #   else
+    #     format.html { render :edit }
+    #     format.json { render json: @forecast_log.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # DELETE /forecast_logs/1
   # DELETE /forecast_logs/1.json
   def destroy
-    @forecast_log.destroy
-    respond_to do |format|
-      format.html { redirect_to forecast_logs_url, notice: 'Forecast log was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    # @forecast_log.destroy
+    # respond_to do |format|
+    #   format.html { redirect_to forecast_logs_url, notice: 'Forecast log was successfully destroyed.' }
+    #   format.json { head :no_content }
+    # end
   end
 
   private
