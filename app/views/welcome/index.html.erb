@@ -39,7 +39,60 @@
   <div class="row">
     <div class="col-md-12"><div id="tempvsprecipit"></div></div>
   </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Precipitação versus Umidade Relativa do Ar</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="precipitvshum"></div></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Temperatura versus Velocidade do Vento</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="tempvswindsp"></div></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Velocidade do Vento versus Precipitação versus Temperatura versus Pressão Atmosférica</h4>
+      <h5>Estação Lomba do Pinheiro</h5>
+      <small>Cor: Temperatura Média. Escala: [-1: 'blue', >10: 'teal', >20: 'green', >30: 'yellow', >40: 'red']</small><br />
+      <small>Tamanho: Precipitação Acumulada do Dia</small><br />
+      <small>Centro da bolha no Eixo Y: Maior velocidade de vento registrada no dia</small>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><div id="bubble"></div></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    <h2><small><a name="obj">Objetivo da Ferramenta</a></small></h2>
+    <p>É um trabalho acadêmico que realizei para a disciplina de Visualização de Dados, ministrada pelos Profs. <a href="https://wiki.inf.ufrgs.br/Carla_Dal_Sasso_Freitas">Carla Freitas</a>, <a href="https://wiki.inf.ufrgs.br/Luciana_Nedel">Luciana Nedel</a> e <a href="http://inf.ufrgs.br/~comba/">João Comba</a>, do <a href="http://inf.ufrgs.br/">Instituto de Informática</a> da <a href="http://www.ufrgs.br">UFRGS</a>, em 2014/2</p>
+    <p>O intuito é explorar algumas técnicas de visualização com dados reais, multidimensionais e temporais. Os dados são periodicamente obtidos do sistema <a href="http://www2.portoalegre.rs.gov.br/ceic/default.php?p_secao=11">Metroclima da Prefeitura de Porto Alegre</a>, através do <a href="http://www.datapoa.com.br/group/clima">DataPOA.</a></p>
+    </div>
+  </div>
+<br/><br/><br/><br/><br/><br/>
+
 </div>
+<footer class="footer">
+  <div class="container">
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Happy Harbor Climate</a>
+          <p class="navbar-text navbar-right"><a href="https://rodrigodk.com.br" class="navbar-link">Por Rodrigo Dlugokenski</a> - <a href="#obj"  class="navbar-link">Objetivos da Ferramenta</a></p>
+        </div>
+      </div>
+    </nav>
+  </div>
+</footer>
 <script type="text/javascript" charset="utf-8">
   var stations = <%= Station.all.to_json.html_safe %>;
   var forecast_providers = <%= ForecastProvider.all.to_json.html_safe %>;
@@ -102,6 +155,7 @@
     st_logs.map(function(d) {
       d.moment = moment(d.normalized_timestamp);
       d.date = dateFormat(d.moment.toDate());
+      d.dayDate = d.moment.format('YYYY-MM-DD');
       fc_log = forecastlog.findByDate(d.moment.format('YYYY-MM-DD'));
       d.max_temp = fc_log == null ? null : fc_log.temperature_max
       d.min_temp = fc_log == null ? null : fc_log.temperature_min
@@ -112,6 +166,10 @@
 
     var dateDimension = ndx.dimension(function (d) {
       return d.moment.toDate();
+    });
+
+    var dateDayDimension = ndx.dimension(function (d) {
+      return d.dayDate;
     });
 
     var stationDimension = ndx.dimension(function(d) {
@@ -256,6 +314,170 @@
           ]).
           brushOn(false).
           render();
+
+      var composite_precipit_hum = dc.compositeChart("#precipitvshum");
+      var humidity_station_grp = [];
+      humidity_station_grp[0] = dateDimension.group().reduce(
+        function(p,v) { if(v.humidity == null){ return null; } return v.station_id == 2 ? p + v.humidity : p; },
+        function(p,v) { if(v.humidity == null){ return null; } return v.station_id == 2 ? p - v.humidity : p; },
+        function() { return null; });
+
+        humidity_station_grp[1] = dateDimension.group().reduce(
+        function(p,v) { if(v.humidity == null){ return null; } return v.station_id == 4 ? p + v.humidity : p; },
+        function(p,v) { if(v.humidity == null){ return null; } return v.station_id == 4 ? p - v.humidity : p; },
+        function() { return null; });
+
+      composite_precipit_hum.
+        width(1280).
+        height(300).
+        x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")])).
+        y(d3.scale.linear().domain([0,<%=StationLog.all.max_by{|x| x.precipitation.to_i }.precipitation%>+10])).
+        yAxisLabel("Precipitação (mm)").
+        rightY(d3.scale.linear().domain([0,1])).
+        rightYAxisLabel("Umidade Relativa (%)").
+        legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5)).
+        renderHorizontalGridLines(true).
+        compose([
+          dc.barChart(composite).
+            dimension(dateDimension).
+            colors('blue').
+            group(humidity_station_grp[0], "Umidade "+stations[1].name).useRightYAxis(true),
+          dc.barChart(composite).
+            dimension(dateDimension).
+            colors('teal').
+            group(humidity_station_grp[1], "Umidade "+stations[3].name).useRightYAxis(true),
+          dc.lineChart(composite).renderArea(true).
+            dimension(dateDimension).
+            colors('red').dashStyle([2,2]).
+            group(precipitation_station_grp[0], "Precipitação "+stations[1].name),
+          dc.lineChart(composite).renderArea(true).
+            dimension(dateDimension).
+            colors('yellow').
+            dashStyle([2,2]).
+            group(precipitation_station_grp[1], "Precipitação "+stations[3].name),
+          ]).
+          brushOn(false).
+          render();
+
+
+        var windspeed_grp = [];
+
+        windspeed_grp[0] = dateDimension.group().reduce(function(p,v) { return v.station_id == 2 ? p + v.windspeed : p; },function(p,v) { return v.station_id == 2 ? p - v.windspeed : p; },function() { return null; });
+        windspeed_grp[1] = dateDimension.group().reduce(function(p,v) { return v.station_id == 4 ? p + v.windspeed : p; },function(p,v) { return v.station_id == 4 ? p - v.windspeed : p; },function() { return null; });
+
+        var composite_temp_windsp = dc.compositeChart("#tempvswindsp");
+        composite_temp_windsp.
+          width(1280).
+          height(300).
+          x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")])).
+          y(d3.scale.linear().domain([-1,50])).
+          yAxisLabel("Temperatura (°C)").
+          rightY(d3.scale.linear().domain([0,<%=StationLog.all.max_by{|x| x.windspeed.to_i }.windspeed%>+5])).
+          rightYAxisLabel("Velocidade do Vento (m/s)").
+          legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5)).
+          renderHorizontalGridLines(true).
+          compose([
+            dc.barChart(composite).
+              dimension(dateDimension).
+              colors('black').
+              group(temp_station_grp[1], "Temp. "+stations[1].name),
+            dc.barChart(composite).
+              dimension(dateDimension).
+              colors('silver').
+              group(temp_station_grp[3], "Temp. "+stations[3].name),
+            dc.lineChart(composite).renderArea(true).
+              dimension(dateDimension).
+              colors('teal').dashStyle([2,1]).
+              group(windspeed_grp[0], "Velocidade do Vento "+stations[1].name).useRightYAxis(true),
+            dc.lineChart(composite).renderArea(true).
+              dimension(dateDimension).
+              colors('indigo').dashStyle([2,1]).
+              group(windspeed_grp[1], "Velocidade do Vento "+stations[3].name).useRightYAxis(true),
+            ]).
+          brushOn(false).
+          render();
+
+
+          var bubble_grp = [];
+
+          bubble_grp[0] = dateDayDimension.group().reduce(
+            function(p,v) {
+              if(v.station_id == 2) {
+                ++p.count;
+                p.windspeed = p.windspeed > v.windspeed ? p.windspeed : v.windspeed;
+                p.sum_precipitation += v.precipitation;
+                p.precipitation = p.sum_precipitation;
+                p.sum_temperature += v.temperature;
+                p.temperature = p.sum_temperature / p.count;
+              }
+
+              return p;
+            },
+            function(p,v) {
+              if(v.station_id == 2) {
+                --p.count;
+                p.windspeed = p.windspeed > v.windspeed ? v.windspeed : p.windspeed;
+                p.sum_precipitation -= v.precipitation;
+                p.precipitation = p.sum_precipitation;
+                p.sum_temperature -= v.temperature;
+                p.temperature = p.sum_temperature / p.count;
+              }
+
+              return p;
+            },
+            function() { return { windspeed: null, sum_precipitation: null, sum_temperature: null, precipitation: null, temperature: null, count: 0}; });
+
+          var composite_temp_windsp = dc.compositeChart("#bubble");
+          composite_temp_windsp.
+            width(1280).
+            height(300).
+            x(d3.time.scale().domain([moment("<%=7.day.ago.to_date.iso8601%>"),moment("<%=Time.now.iso8601%>")])).
+            y(d3.scale.linear().domain([-10,<%=StationLog.all.max_by{|x| x.windspeed.to_i }.windspeed%>+20])).
+            yAxisLabel("Velocidade do Vento (m/s)").
+            rightY(d3.scale.linear().domain([<%=StationLog.all.min_by{|x| x.pressure.nil? ? Float::INFINITY : x.pressure.to_i }.pressure%>-10,<%=StationLog.all.max_by{|x| x.pressure.to_i }.pressure%>+20])).
+            rightYAxisLabel("Pressão Atm. (hPa)").
+            legend(dc.legend().x(80).y(20).horizontal(true).itemWidth(200).gap(5)).
+            renderHorizontalGridLines(true).
+            compose([
+              dc.bubbleChart(composite).
+                dimension(dateDayDimension).
+                colors(['blue','teal','green','green','yellow','red']).
+                colorDomain([-10.0,40]).
+                colorAccessor(function (d) {
+                  return d.value.count != 0 ? d.value.temperature / d.value.count : 0;
+                }).
+                keyAccessor(function (p) {
+                  return moment(p.key);
+                }).
+                valueAccessor(function (p) {
+                  return p.count != 0 ? p.value.windspeed / p.value.count : 0;
+                }).
+                radiusValueAccessor(function (p) {
+                  return p.value.precipitation / 2;
+                }).
+                r(d3.scale.linear().domain([0,200])).
+                maxBubbleRelativeSize(0.1).
+                renderLabel(true).
+                label(function (p) {
+                  return "T: "+numberFormat(p.value.temperature)+"°C P: "+numberFormat(p.value.precipitation)+"mm";
+                }).
+                renderTitle(true). // (optional) whether chart should render titles, :default = false
+                title(function (p) {
+                  return [
+                  p.key,
+                  'Temperatura Media: ' + numberFormat(p.value.temperature)+"°C",
+                  'Maior Vel. Vento: ' + numberFormat(p.value.windspeed) + 'm/s',
+                  'Precipitação Acumulada: ' + numberFormat(p.value.precipitation) + '%'
+                  ].join('\n');
+                }).
+                group(bubble_grp[0], "Temp. "+stations[1].name),
+              dc.lineChart(composite).renderArea(true).
+                dimension(dateDimension).
+                colors('grey').
+              group(pressure_station_grp[1], "Pressão Atm. "+stations[1].name).useRightYAxis(true),
+            ]).
+            brushOn(false).
+            render();
 
   });
 </script>
