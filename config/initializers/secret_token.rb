@@ -1,2 +1,0 @@
-#Change after install
-Rails.application.config.secret_key_base = 'c603c09713e5e64ff623e13080cef8977ff1016ca1b267aca1510ba3a26c1e6b4ee420a58133a3d9bf1cc611175a17be2885d1200a6837302f943f47f0d19d65'

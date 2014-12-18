@@ -82,7 +82,4 @@ test:
 #
 production:
   <<: *default
-  database: hhc_production
-  username: hhc
-  #password: <%= ENV['HAPPYHARBORCLIMATE_DATABASE_PASSWORD'] %>
-  password: "JmfbdsWh6ryE"
+  url: <%= ENV['HHC_DATABASE_URL'] %>
