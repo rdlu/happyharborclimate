@@ -3,6 +3,13 @@ Happy Harbor Climate
 
 Trabalho acadêmico para cadeira de Visualização de dados
 
+Online em: http://hhc.rodrigodk.com.br
+
+Disclaimer:
+Essa não é uma ferramenta para validação dos dados. A fonte de dados frequentemente falha, e a manipulação dos dados que eu fiz foi feita sem qualquer pesquisa nessa área de meteorologia. Ela é um demonstrador de tecnologia somente.
+
+O código fonte está longe do ideal dos bons padrões de software, pois foi feita somente com intuito de prototipação.
+
 Things Needed:
 
 * Ruby version: __MRI 2.1.5 or Rubinius 2.4.1__
